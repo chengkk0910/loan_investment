@@ -11,6 +11,7 @@
 </head>
 
 <body>
+    <h1>純屬虛構</h1>
     <div class="container-fluid p-0">
         <div class="row g-0">
             <div class="col-12">
@@ -143,10 +144,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
-        $(document).ready(function() {
-            $('#calculateBtn').on('click', function() {
+        $(document).ready(function () {
+            $('#calculateBtn').on('click', function () {
                 // 獲取輸入值並轉換
                 const interest = parseFloat($('#interest').val()) / 100 / 12; // 月利率
                 const years = parseInt($('#years').val());
@@ -155,13 +156,13 @@
                 const numberOfPayments = years * 12;
 
                 // 計算月付金額
-                const monthlyPayment = (amount * interest * Math.pow(1 + interest, numberOfPayments)) / 
-                                     (Math.pow(1 + interest, numberOfPayments) - 1);
+                const monthlyPayment = (amount * interest * Math.pow(1 + interest, numberOfPayments)) /
+                    (Math.pow(1 + interest, numberOfPayments) - 1);
 
                 let remainingBalance = amount;
                 let tableHTML = '';
                 let firstYearTotalPayment = 0;
-                
+
                 // 計算第一年的總還款金額
                 for (let i = 1; i <= numberOfPayments; i++) {
                     const interestPayment = remainingBalance * interest;
@@ -196,7 +197,7 @@
                 // 更新比較表格
                 $('#tableFirstYearPayment').text(Math.round(firstYearTotalPayment).toLocaleString());
                 $('#tablePledgePayment').text(Math.round(annualPledgePayment).toLocaleString());
-                
+
                 // 計算並顯示差額
                 const difference = firstYearTotalPayment - annualPledgePayment;
                 const percentDiff = ((difference / firstYearTotalPayment) * 100).toFixed(1);
