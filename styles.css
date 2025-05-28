@@ -11,12 +11,17 @@ body {
 }
 
 .box-container {
-    height: 90vh;
+    /* height: 90vh; */
     width: 100%;
     padding: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* 特別設定 Box 4 的容器高度 */
+.box-container:nth-child(4) {
+    height: 200vh;
 }
 
 .box {
@@ -122,7 +127,8 @@ body {
 }
 
 /* Annual payment display styling */
-.annual-payment-display, .content-display {
+.annual-payment-display,
+.content-display {
     background-color: rgba(255, 255, 255, 0.1);
     padding: 2rem;
     border-radius: 15px;
@@ -132,24 +138,33 @@ body {
     max-width: 500px;
 }
 
-.annual-payment-display:hover, .content-display:hover {
+.annual-payment-display:hover,
+.content-display:hover {
     transform: translateY(-5px);
     background-color: rgba(255, 255, 255, 0.15);
 }
 
-.payment-item, .content-item {
+.payment-item,
+.content-item {
     padding: 1rem;
     border-radius: 10px;
     background-color: rgba(255, 255, 255, 0.05);
     transition: all 0.3s ease;
 }
 
-.payment-item:hover, .content-item:hover {
+.payment-item:hover,
+.content-item:hover {
     background-color: rgba(255, 255, 255, 0.1);
     transform: translateX(5px);
 }
 
-#annualPayment, #annualPrincipal, #annualInterest {
+#annualPayment,
+#annualPrincipal,
+#annualInterest {
     color: #fff;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-} 
+}
+
+.container1 {
+    height: 100vh;
+}
