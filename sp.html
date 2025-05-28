@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>貸款計算器</title>
+    <title>理財型房貸計算器</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
@@ -15,9 +15,9 @@
         <a href="index.html">一般貸款</a>&nbsp;&nbsp;&nbsp;&nbsp;
         <a href="sp.html">理財型房貸</a>
     </div>
-    <h1 class="text-center">一般貸款計算器</h1>
-    <h3 class="text-center">純屬虛構 借貸投資風險大 請勿使用</h3>
     <div class="container-fluid p-0">
+        <h1 class="text-center">理財型房貸計算器</h1>
+        <h3 class="text-center">純屬虛構 借貸投資風險大 請勿使用</h3>
         <div class="row g-0">
             <div class="col-12">
                 <div class="box-container container1">
@@ -26,11 +26,6 @@
                             <span class="input-group-text">利率</span>
                             <input type="number" id="interest" placeholder="請輸入年利率" class="form-control" step="0.01">
                             <span class="input-group-text">%</span>
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-text">年限</span>
-                            <input type="number" id="years" placeholder="請輸入貸款年限" class="form-control">
-                            <span class="input-group-text">年</span>
                         </div>
                         <div class="input-group">
                             <span class="input-group-text">貸款金額</span>
@@ -54,9 +49,8 @@
                                 <thead>
                                     <tr>
                                         <th>期數</th>
-                                        <th>月付金額</th>
+                                        <th>月付利息</th>
                                         <th>本金</th>
-                                        <th>利息</th>
                                         <th>剩餘本金</th>
                                     </tr>
                                 </thead>
@@ -84,10 +78,10 @@
                             </div>
                             <div class="payment-item mb-4">
                                 <div class="text-center mb-2">
-                                    <span class="fs-4">第一年總還款金額：</span>
+                                    <span class="fs-4">年度利息支出：</span>
                                 </div>
                                 <div class="text-center">
-                                    <span id="firstYearTotalPayment" class="display-5 fw-bold">0</span>
+                                    <span id="yearlyInterest" class="display-5 fw-bold">0</span>
                                     <span class="fs-4">元</span>
                                 </div>
                             </div>
@@ -125,8 +119,8 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td class="text-center">第一年總還款</td>
-                                                <td class="text-center" id="tableFirstYearPayment">0</td>
+                                                <td class="text-center">年度利息</td>
+                                                <td class="text-center" id="tableYearlyInterest">0</td>
                                                 <td class="text-center" id="tableDifference">0</td>
                                             </tr>
                                             <tr>
@@ -154,69 +148,56 @@
         $(document).ready(function () {
             $('#calculateBtn').on('click', function () {
                 // 獲取輸入值並轉換
-                const interest = parseFloat($('#interest').val()) / 100 / 12; // 月利率
-                const years = parseInt($('#years').val());
+                const yearlyInterestRate = parseFloat($('#interest').val()) / 100; // 年利率
+                const monthlyInterestRate = yearlyInterestRate / 12; // 月利率
                 const amount = parseFloat($('#amount').val()) * 10000; // 轉換為元
                 const pledgeRate = parseFloat($('#pledgeRate').val()) / 100; // 質押利率
-                const numberOfPayments = years * 12;
 
-                // 計算月付金額
-                const monthlyPayment = (amount * interest * Math.pow(1 + interest, numberOfPayments)) /
-                    (Math.pow(1 + interest, numberOfPayments) - 1);
+                // 計算月付利息
+                const monthlyInterest = amount * monthlyInterestRate;
+                const yearlyInterest = monthlyInterest * 12;
 
-                let remainingBalance = amount;
                 let tableHTML = '';
-                let firstYearTotalPayment = 0;
 
-                // 計算第一年的總還款金額
-                for (let i = 1; i <= numberOfPayments; i++) {
-                    const interestPayment = remainingBalance * interest;
-                    const principalPayment = monthlyPayment - interestPayment;
-                    remainingBalance -= principalPayment;
-
-                    // 累計第一年的還款
-                    if (i <= 12) {
-                        firstYearTotalPayment += monthlyPayment;
-                    }
-
+                // 生成12個月的利息明細
+                for (let i = 1; i <= 12; i++) {
                     tableHTML += `
                         <tr>
                             <td>${i}</td>
-                            <td>${monthlyPayment.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</td>
-                            <td>${principalPayment.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</td>
-                            <td>${interestPayment.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</td>
-                            <td>${Math.max(0, remainingBalance).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</td>
+                            <td>${monthlyInterest.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</td>
+                            <td>0</td>
+                            <td>${amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</td>
                         </tr>
                     `;
                 }
 
-                // 計算質押還款金額
-                const annualPledgePayment = firstYearTotalPayment * pledgeRate;
+                // 計算質押還款金額 (以年度利息為基礎)
+                const annualPledgePayment = yearlyInterest * pledgeRate;
 
                 // 更新顯示
                 $('#totalLoanAmount').text(Math.round(amount).toLocaleString());
-                $('#firstYearTotalPayment').text(Math.round(firstYearTotalPayment).toLocaleString());
+                $('#yearlyInterest').text(Math.round(yearlyInterest).toLocaleString());
                 $('#displayPledgeRate').text((pledgeRate * 100).toFixed(2));
                 $('#annualPledgePayment').text(Math.round(annualPledgePayment).toLocaleString());
 
                 // 更新比較表格
-                $('#tableFirstYearPayment').text(Math.round(firstYearTotalPayment).toLocaleString());
+                $('#tableYearlyInterest').text(Math.round(yearlyInterest).toLocaleString());
                 $('#tablePledgePayment').text(Math.round(annualPledgePayment).toLocaleString());
 
                 // 計算並顯示差額
-                const difference = firstYearTotalPayment - annualPledgePayment;
-                const percentDiff = ((difference / firstYearTotalPayment) * 100).toFixed(1);
+                const difference = yearlyInterest - annualPledgePayment;
+                const percentDiff = ((difference / yearlyInterest) * 100).toFixed(1);
                 $('#tableDifference').text(Math.round(difference).toLocaleString());
 
                 // 顯示比較結果
                 if (difference > 0) {
-                    $('#pledgeVsPayment').text(`質押還款比第一年還款少 ${percentDiff}%`)
+                    $('#pledgeVsPayment').text(`質押還款比年度利息少 ${percentDiff}%`)
                         .removeClass('text-danger text-warning').addClass('text-success');
                 } else if (difference < 0) {
-                    $('#pledgeVsPayment').text(`質押還款比第一年還款多 ${Math.abs(percentDiff)}%`)
+                    $('#pledgeVsPayment').text(`質押還款比年度利息多 ${Math.abs(percentDiff)}%`)
                         .removeClass('text-success text-warning').addClass('text-danger');
                 } else {
-                    $('#pledgeVsPayment').text('質押還款等於第一年還款')
+                    $('#pledgeVsPayment').text('質押還款等於年度利息')
                         .removeClass('text-success text-danger').addClass('text-warning');
                 }
 
