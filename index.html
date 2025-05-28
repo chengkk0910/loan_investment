@@ -14,7 +14,7 @@
     <div class="container-fluid p-0">
         <div class="row g-0">
             <div class="col-12">
-                <div class="box-container">
+                <div class="box-container container1">
                     <div class="box p-4 d-flex flex-column gap-3">
                         <div class="input-group">
                             <span class="input-group-text">利率</span>
@@ -65,42 +65,6 @@
             <div class="col-12">
                 <div class="box-container">
                     <div class="box p-4 d-flex flex-column align-items-center justify-content-center">
-                        <h2 class="mb-4">第一年還款分析</h2>
-                        <div class="annual-payment-display">
-                            <div class="payment-item mb-4">
-                                <div class="text-center mb-2">
-                                    <span class="fs-4">年度總還款：</span>
-                                </div>
-                                <div class="text-center">
-                                    <span id="annualPayment" class="display-5 fw-bold">0</span>
-                                    <span class="fs-4">元</span>
-                                </div>
-                            </div>
-                            <div class="payment-item mb-4">
-                                <div class="text-center mb-2">
-                                    <span class="fs-4">年度本金：</span>
-                                </div>
-                                <div class="text-center">
-                                    <span id="annualPrincipal" class="display-5 fw-bold">0</span>
-                                    <span class="fs-4">元</span>
-                                </div>
-                            </div>
-                            <div class="payment-item">
-                                <div class="text-center mb-2">
-                                    <span class="fs-4">年度利息：</span>
-                                </div>
-                                <div class="text-center">
-                                    <span id="annualInterest" class="display-5 fw-bold">0</span>
-                                    <span class="fs-4">元</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="box-container">
-                    <div class="box p-4 d-flex flex-column align-items-center justify-content-center">
                         <h2 class="mb-4">質押還款分析</h2>
                         <div class="content-display">
                             <div class="payment-item mb-4">
@@ -114,6 +78,15 @@
                             </div>
                             <div class="payment-item mb-4">
                                 <div class="text-center mb-2">
+                                    <span class="fs-4">第一年總還款金額：</span>
+                                </div>
+                                <div class="text-center">
+                                    <span id="firstYearTotalPayment" class="display-5 fw-bold">0</span>
+                                    <span class="fs-4">元</span>
+                                </div>
+                            </div>
+                            <div class="payment-item mb-4">
+                                <div class="text-center mb-2">
                                     <span class="fs-4">質押利率：</span>
                                 </div>
                                 <div class="text-center">
@@ -121,27 +94,43 @@
                                     <span class="fs-4">%</span>
                                 </div>
                             </div>
-                            <div class="payment-item">
+                            <div class="payment-item mb-4">
                                 <div class="text-center mb-2">
                                     <span class="fs-4">年度質押還款：</span>
                                 </div>
-                                <div class="text-center">
+                                <div class="text-center d-flex flex-column align-items-center">
                                     <span id="annualPledgePayment" class="display-5 fw-bold">0</span>
                                     <span class="fs-4">元</span>
+                                    <span id="pledgeVsPayment" class="fs-5 mt-2 text-warning">-</span>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="box-container">
-                    <div class="box p-4 d-flex flex-column align-items-center justify-content-center">
-                        <h2 class="mb-4">Box 5</h2>
-                        <div class="content-display">
-                            <div class="content-item">
-                                <!-- Box 5 的內容將在這裡 -->
-                                <p class="text-center fs-4">待添加內容</p>
+                            <div class="payment-item">
+                                <div class="text-center mb-3">
+                                    <span class="fs-4">每年還款比較：</span>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-light table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">項目</th>
+                                                <th class="text-center">金額</th>
+                                                <th class="text-center">差額</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center">第一年總還款</td>
+                                                <td class="text-center" id="tableFirstYearPayment">0</td>
+                                                <td class="text-center" id="tableDifference">0</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center">質押還款</td>
+                                                <td class="text-center" id="tablePledgePayment">0</td>
+                                                <td class="text-center">-</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -171,21 +160,17 @@
 
                 let remainingBalance = amount;
                 let tableHTML = '';
+                let firstYearTotalPayment = 0;
                 
-                // 計算第一年的本金和利息總和
-                let firstYearPrincipal = 0;
-                let firstYearInterest = 0;
-
-                // 生成每月還款明細
+                // 計算第一年的總還款金額
                 for (let i = 1; i <= numberOfPayments; i++) {
                     const interestPayment = remainingBalance * interest;
                     const principalPayment = monthlyPayment - interestPayment;
                     remainingBalance -= principalPayment;
 
-                    // 累計第一年的本金和利息
+                    // 累計第一年的還款
                     if (i <= 12) {
-                        firstYearPrincipal += principalPayment;
-                        firstYearInterest += interestPayment;
+                        firstYearTotalPayment += monthlyPayment;
                     }
 
                     tableHTML += `
@@ -199,21 +184,35 @@
                     `;
                 }
 
-                // 更新年度總金額
-                const annualPayment = monthlyPayment * 12;
-                $('#annualPayment').text(Math.round(annualPayment).toLocaleString());
-                
-                // 更新年度本金和利息
-                $('#annualPrincipal').text(Math.round(firstYearPrincipal).toLocaleString());
-                $('#annualInterest').text(Math.round(firstYearInterest).toLocaleString());
+                // 計算質押還款金額
+                const annualPledgePayment = firstYearTotalPayment * pledgeRate;
 
-                // 更新質押相關資訊
+                // 更新顯示
                 $('#totalLoanAmount').text(Math.round(amount).toLocaleString());
+                $('#firstYearTotalPayment').text(Math.round(firstYearTotalPayment).toLocaleString());
                 $('#displayPledgeRate').text((pledgeRate * 100).toFixed(2));
-                
-                // 計算年度質押還款金額
-                const annualPledgePayment = amount * pledgeRate;
                 $('#annualPledgePayment').text(Math.round(annualPledgePayment).toLocaleString());
+
+                // 更新比較表格
+                $('#tableFirstYearPayment').text(Math.round(firstYearTotalPayment).toLocaleString());
+                $('#tablePledgePayment').text(Math.round(annualPledgePayment).toLocaleString());
+                
+                // 計算並顯示差額
+                const difference = firstYearTotalPayment - annualPledgePayment;
+                const percentDiff = ((difference / firstYearTotalPayment) * 100).toFixed(1);
+                $('#tableDifference').text(Math.round(difference).toLocaleString());
+
+                // 顯示比較結果
+                if (difference > 0) {
+                    $('#pledgeVsPayment').text(`質押還款比第一年還款少 ${percentDiff}%`)
+                        .removeClass('text-danger text-warning').addClass('text-success');
+                } else if (difference < 0) {
+                    $('#pledgeVsPayment').text(`質押還款比第一年還款多 ${Math.abs(percentDiff)}%`)
+                        .removeClass('text-success text-warning').addClass('text-danger');
+                } else {
+                    $('#pledgeVsPayment').text('質押還款等於第一年還款')
+                        .removeClass('text-success text-danger').addClass('text-warning');
+                }
 
                 $('#loanTable').html(tableHTML);
             });
